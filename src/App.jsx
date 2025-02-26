@@ -12,26 +12,33 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen bg-gray-50">
+        <div className="flex flex-col min-h-screen w-full bg-gray-50">
           <Navbar />
-          <main className="container mx-auto px-4 py-8">
-            <Routes>
-              {/* Public Route */}
-              <Route path="/login" element={<Login />} />
+          <div className="flex-grow w-full">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full h-full">
+              <main className="py-10">
+                <Routes>
+                  {/* Public Route */}
+                  <Route path="/login" element={<Login />} />
 
-              {/* Protected Routes */}
-              <Route element={<ProtectedRoute />}>
-                <Route index element={<ProductList />} />
-                <Route path="/products" element={<ProductList />} />
-                <Route path="/products/:id" element={<ProductDetails />} />
-                <Route path="/products/new" element={<ProductForm />} />
-                <Route path="/products/edit/:id" element={<ProductForm />} />
-              </Route>
+                  {/* Protected Routes */}
+                  <Route element={<ProtectedRoute />}>
+                    {/* More specific routes first */}
+                    <Route path="/products/new" element={<ProductForm />} />
+                    <Route path="/products/edit/:id" element={<ProductForm />} />
+                    {/* Then dynamic routes */}
+                    <Route path="/products/:id" element={<ProductDetails />} />
+                    {/* Then general routes */}
+                    <Route path="/products" element={<ProductList />} />
+                    <Route path="/" element={<Navigate to="/products" replace />} />
+                  </Route>
 
-              {/* Redirect all other routes to home */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </main>
+                  {/* Catch all route */}
+                  <Route path="*" element={<Navigate to="/products" replace />} />
+                </Routes>
+              </main>
+            </div>
+          </div>
           <Toaster position="top-right" />
         </div>
       </BrowserRouter>
