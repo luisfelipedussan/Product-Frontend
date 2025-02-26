@@ -19,9 +19,10 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const response = await api.get('/user');
+      const response = await api.request('/api/user');
       setUser(response.data);
     } catch (error) {
+      console.error('Auth check failed:', error);
       localStorage.removeItem('token');
     } finally {
       setLoading(false);
@@ -30,22 +31,34 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await api.post('/login', credentials);
-      const { token, user: userData } = response.data;
-      
-      localStorage.setItem('token', token);
-      api.setToken(token);
-      setUser(userData);
-      return true;
+      const response = await api.login(credentials);
+      console.log('Login response:', response); // Debug log
+
+      if (response.status === 'success') {
+        localStorage.setItem('token', response.token);
+        api.setToken(response.token);
+        setUser(response.user);
+        return true;
+      } else {
+        console.error('Login failed:', response.message);
+        return false;
+      }
     } catch (error) {
-      return false;
+      console.error('Login error:', error);
+      throw error;
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    api.setToken(null);
-    setUser(null);
+  const logout = async () => {
+    try {
+      await api.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      localStorage.removeItem('token');
+      api.setToken(null);
+      setUser(null);
+    }
   };
 
   if (loading) {

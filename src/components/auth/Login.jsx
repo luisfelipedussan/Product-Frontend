@@ -3,8 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('test@example.com');
+  const [password, setPassword] = useState('password');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
@@ -19,6 +19,7 @@ function Login() {
     setIsLoading(true);
 
     try {
+      console.log('Attempting login with:', { email, password }); // Debug log
       const success = await login({ email, password });
       if (success) {
         navigate(from, { replace: true });
@@ -26,7 +27,8 @@ function Login() {
         setError('Invalid credentials');
       }
     } catch (err) {
-      setError('An error occurred during login');
+      console.error('Login error:', err);
+      setError(err.message || 'An error occurred during login');
     } finally {
       setIsLoading(false);
     }
