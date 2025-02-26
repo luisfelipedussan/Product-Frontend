@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { Toaster } from 'react-hot-toast';
 import Navbar from './components/layout/Navbar';
 import ProductList from './components/products/ProductList';
 import ProductDetails from './components/products/ProductDetails';
@@ -15,15 +16,23 @@ function App() {
           <Navbar />
           <main className="container mx-auto px-4 py-8">
             <Routes>
-              <Route path="/" element={<ProductList />} />
-              <Route path="/products/:id" element={<ProductDetails />} />
+              {/* Public Route */}
+              <Route path="/login" element={<Login />} />
+
+              {/* Protected Routes */}
               <Route element={<ProtectedRoute />}>
+                <Route index element={<ProductList />} />
+                <Route path="/products" element={<ProductList />} />
+                <Route path="/products/:id" element={<ProductDetails />} />
                 <Route path="/products/new" element={<ProductForm />} />
                 <Route path="/products/edit/:id" element={<ProductForm />} />
               </Route>
-              <Route path="/login" element={<Login />} />
+
+              {/* Redirect all other routes to home */}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
+          <Toaster position="top-right" />
         </div>
       </BrowserRouter>
     </AuthProvider>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { toast } from 'react-hot-toast';
 
 function Login() {
   const [email, setEmail] = useState('test@example.com');
@@ -19,16 +20,18 @@ function Login() {
     setIsLoading(true);
 
     try {
-      console.log('Attempting login with:', { email, password }); // Debug log
       const success = await login({ email, password });
       if (success) {
-        navigate(from, { replace: true });
+        toast.success('Login successful!');
+        navigate('/products');
       } else {
         setError('Invalid credentials');
+        toast.error('Invalid credentials');
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.message || 'An error occurred during login');
+      setError('An error occurred during login');
+      toast.error('Login failed');
     } finally {
       setIsLoading(false);
     }
