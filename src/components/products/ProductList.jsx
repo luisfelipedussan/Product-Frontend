@@ -17,16 +17,7 @@ function ProductList() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      // Direct API call to check the response structure
-      const response = await fetch('http://localhost:8000/api/products', {
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      console.log('Response status:', response.status);
-      const data = await response.json();
+      const data = await api.getProducts();
       console.log('Products data:', data);
 
       if (data && Array.isArray(data)) {
@@ -49,7 +40,7 @@ function ProductList() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-800"></div>
       </div>
     );
   }
@@ -60,7 +51,7 @@ function ProductList() {
         <div className="text-red-500 text-lg mb-4">{error}</div>
         <button 
           onClick={fetchProducts}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900"
         >
           Try Again
         </button>
@@ -75,7 +66,7 @@ function ProductList() {
         {user && (
           <Link
             to="/products/new"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+            className="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 transition-colors"
           >
             Add New Product
           </Link>
@@ -88,7 +79,7 @@ function ProductList() {
           {user && (
             <Link
               to="/products/new"
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900"
             >
               Add First Product
             </Link>
@@ -108,7 +99,7 @@ function ProductList() {
                 <div className="flex justify-between items-center">
                   <Link
                     to={`/products/${product.id}`}
-                    className="text-blue-500 hover:text-blue-700"
+                    className="text-blue-800 hover:text-blue-900"
                   >
                     View Details
                   </Link>

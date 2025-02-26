@@ -27,7 +27,10 @@ class ApiService {
     const url = `${API_URL}/${cleanEndpoint}`;
     
     // Debug log
-    console.log('Making request to:', url);
+    console.log('Making request to:', url, {
+      method: options.method || 'GET',
+      body: options.body
+    });
 
     const response = await fetch(url, {
       ...options,
@@ -93,6 +96,7 @@ class ApiService {
     });
   }
 
+  // Products endpoints
   getProducts() {
     return this.request('products');
   }
@@ -104,20 +108,20 @@ class ApiService {
   createProduct(data) {
     return this.request('products', {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     });
   }
 
   updateProduct(id, data) {
     return this.request(`products/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     });
   }
 
   deleteProduct(id) {
     return this.request(`products/${id}`, {
-      method: 'DELETE',
+      method: 'DELETE'
     });
   }
 }

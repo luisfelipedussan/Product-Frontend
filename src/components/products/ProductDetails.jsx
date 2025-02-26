@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import toast from 'react-hot-toast';
 
 function ProductDetails() {
   const [product, setProduct] = useState(null);
@@ -17,11 +18,22 @@ function ProductDetails() {
 
   const loadProduct = async () => {
     try {
-      const data = await api.get(`/products/${id}`);
-      setProduct(data);
-      setLoading(false);
+      setLoading(true);
+      const response = await api.getProduct(id);
+      console.log('Product data:', response);
+
+      if (response && response.data) {
+        setProduct(response.data);
+      } else if (response) {
+        setProduct(response);
+      } else {
+        throw new Error('Invalid data format received');
+      }
     } catch (err) {
+      console.error('Error loading product:', err);
       setError('Failed to load product');
+      toast.error('Failed to load product');
+    } finally {
       setLoading(false);
     }
   };
@@ -32,27 +44,51 @@ function ProductDetails() {
     }
 
     try {
-      await api.delete(`/products/${id}`);
-      navigate('/');
+      await api.deleteProduct(id);
+      toast.success('Product deleted successfully');
+      navigate('/products');
     } catch (err) {
+      console.error('Error deleting product:', err);
       setError('Failed to delete product');
+      toast.error('Failed to delete product');
     }
   };
 
-  if (loading) return <div className="text-center">Loading...</div>;
-  if (error) return <div className="text-red-500 text-center">{error}</div>;
-  if (!product) return <div className="text-center">Product not found</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-800"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-10">
+        <div className="text-red-500 text-lg mb-4">{error}</div>
+        <button
+          onClick={loadProduct}
+          className="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="text-center py-10">
+        <div className="text-gray-500 text-lg">Product not found</div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="md:flex">
           <div className="md:flex-shrink-0">
-            <img
-              className="h-48 w-full object-cover md:w-48"
-              src={product.image_url || 'https://via.placeholder.com/300'}
-              alt={product.name}
-            />
           </div>
           <div className="p-8">
             <div className="flex justify-between items-start">
@@ -66,7 +102,7 @@ function ProductDetails() {
               <div className="mt-6 flex gap-4">
                 <Link
                   to={`/products/edit/${id}`}
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  className="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900"
                 >
                   Edit
                 </Link>
