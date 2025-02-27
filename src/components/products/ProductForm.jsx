@@ -56,13 +56,18 @@ function ProductForm() {
       };
 
       if (isEditing) {
-        await api.updateProduct(id, dataToSend);
-        toast.success('Product updated successfully');
+        const response = await api.updateProduct(id, dataToSend);
+        if (response && (response.data || response)) {
+          toast.success('Product updated successfully');
+          navigate('/products');
+        } else {
+          throw new Error('Invalid response format');
+        }
       } else {
         await api.createProduct(dataToSend);
         toast.success('Product created successfully');
+        navigate('/products');
       }
-      navigate('/products');
     } catch (err) {
       console.error('Error saving product:', err);
       const errorMessage = err.message || (isEditing ? 'Failed to update product' : 'Failed to create product');
