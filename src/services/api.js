@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8000/api';
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 class ApiService {
   constructor() {
@@ -24,7 +24,7 @@ class ApiService {
 
   async request(endpoint, options = {}) {
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-    const url = `${API_URL}/${cleanEndpoint}`;
+    const url = `${baseURL}/${cleanEndpoint}`;
     
     // Debug log
     console.log('Making request to:', url, {
