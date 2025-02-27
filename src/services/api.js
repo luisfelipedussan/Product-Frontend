@@ -116,10 +116,15 @@ class ApiService {
     });
   }
 
-  updateProduct(id, data) {
+  async updateProduct(id, data) {
     return this.request(`products/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(data)
+      body: JSON.stringify({
+        name: data.name,
+        description: data.description,
+        price: parseFloat(data.price),
+        stock: parseInt(data.stock)
+      })
     });
   }
 
