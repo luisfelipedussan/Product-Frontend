@@ -7,6 +7,7 @@ class ApiService {
 
   setToken(token) {
     this.token = token;
+    localStorage.setItem('token', token);
   }
 
   getHeaders() {
@@ -23,8 +24,7 @@ class ApiService {
   }
 
   async request(endpoint, options = {}) {
-    const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-    const url = `${API_URL}/${cleanEndpoint}`;
+    const url = `${API_URL}/${endpoint}`;
     
     // Debug log
     console.log('Making request to:', url, {
@@ -37,6 +37,17 @@ class ApiService {
       headers: this.getHeaders(),
     });
 
+    // For DELETE requests that return 204 No Content
+    if (response.status === 204) {
+      return null;
+    }
+
+    // For other responses
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'API request failed');
+    }
+
     const data = await response.json();
 
     // Debug logs
@@ -46,13 +57,6 @@ class ApiService {
       status: response.status,
       response: data
     });
-
-    if (!response.ok) {
-      throw {
-        status: response.status,
-        ...data
-      };
-    }
 
     return data;
   }
@@ -114,13 +118,8 @@ class ApiService {
 
   updateProduct(id, data) {
     return this.request(`products/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify(data)
-    }).then(response => {
-      // Envolver la respuesta en un formato consistente
-      return {
-        data: response
-      };
     });
   }
 
