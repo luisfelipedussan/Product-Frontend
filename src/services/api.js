@@ -114,8 +114,13 @@ class ApiService {
 
   updateProduct(id, data) {
     return this.request(`products/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       body: JSON.stringify(data)
+    }).then(response => {
+      // Envolver la respuesta en un formato consistente
+      return {
+        data: response
+      };
     });
   }
 

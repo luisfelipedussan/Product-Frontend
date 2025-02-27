@@ -1,1 +1,48 @@
- 
+version: '3.8'
+
+services:
+  # Frontend - React
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8000/api
+    depends_on:
+      - backend
+
+  # Backend - Laravel
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      - DB_HOST=db
+      - DB_DATABASE=productapp
+      - DB_USERNAME=root
+      - DB_PASSWORD=secret
+    depends_on:
+      - db
+
+  # Database - MySQL
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=productapp
+      - MYSQL_ROOT_PASSWORD=secret
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data: 

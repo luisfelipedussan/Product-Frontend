@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import logo from '../../assets/qargo.jpg';
 
 function Navbar() {
   const { user, logout } = useAuth();
@@ -15,6 +16,7 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
+            <img src={logo} alt="logo" className="w-8 h-8 mr-2" />
             <Link to="/" className="text-xl font-bold text-gray-800">
               Products App
             </Link>
